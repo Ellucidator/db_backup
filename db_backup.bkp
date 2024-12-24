@@ -1,0 +1,1450 @@
+--
+-- PostgreSQL database dump
+--
+
+-- Dumped from database version 12.22 (Ubuntu 12.22-0ubuntu0.20.04.1)
+-- Dumped by pg_dump version 12.22 (Ubuntu 12.22-0ubuntu0.20.04.1)
+
+SET statement_timeout = 0;
+SET lock_timeout = 0;
+SET idle_in_transaction_session_timeout = 0;
+SET client_encoding = 'UTF8';
+SET standard_conforming_strings = on;
+SELECT pg_catalog.set_config('search_path', '', false);
+SET check_function_bodies = false;
+SET xmloption = content;
+SET client_min_messages = warning;
+SET row_security = off;
+
+--
+-- Name: enum_purchases_payment_status; Type: TYPE; Schema: public; Owner: administrador
+--
+
+CREATE TYPE public.enum_purchases_payment_status AS ENUM (
+    'pending',
+    'approved',
+    'authorized',
+    'in_process',
+    'in_mediation',
+    'rejected',
+    'cancelled',
+    'refunded',
+    'charged_back'
+);
+
+
+ALTER TYPE public.enum_purchases_payment_status OWNER TO administrador;
+
+--
+-- Name: enum_purchases_payment_type; Type: TYPE; Schema: public; Owner: administrador
+--
+
+CREATE TYPE public.enum_purchases_payment_type AS ENUM (
+    'ticket',
+    'credit_card',
+    'debit_card',
+    'bank_transfer',
+    'atm',
+    'prepaid_card',
+    'digital_currency',
+    'digital_wallet',
+    'voucher_card',
+    'crypto_transfer'
+);
+
+
+ALTER TYPE public.enum_purchases_payment_type OWNER TO administrador;
+
+--
+-- Name: enum_purchases_status; Type: TYPE; Schema: public; Owner: administrador
+--
+
+CREATE TYPE public.enum_purchases_status AS ENUM (
+    'Recebido',
+    'Transportadora',
+    'Enviado',
+    'Entregue',
+    'Cancelado'
+);
+
+
+ALTER TYPE public.enum_purchases_status OWNER TO administrador;
+
+SET default_tablespace = '';
+
+SET default_table_access_method = heap;
+
+--
+-- Name: SequelizeMeta; Type: TABLE; Schema: public; Owner: administrador
+--
+
+CREATE TABLE public."SequelizeMeta" (
+    name character varying(255) NOT NULL
+);
+
+
+ALTER TABLE public."SequelizeMeta" OWNER TO administrador;
+
+--
+-- Name: Sessions; Type: TABLE; Schema: public; Owner: administrador
+--
+
+CREATE TABLE public."Sessions" (
+    sid character varying(36) NOT NULL,
+    expires timestamp with time zone,
+    data text,
+    created_at timestamp with time zone NOT NULL,
+    updated_at timestamp with time zone NOT NULL
+);
+
+
+ALTER TABLE public."Sessions" OWNER TO administrador;
+
+--
+-- Name: adresses; Type: TABLE; Schema: public; Owner: administrador
+--
+
+CREATE TABLE public.adresses (
+    id bigint NOT NULL,
+    user_id bigint NOT NULL,
+    receiver_name character varying(255) NOT NULL,
+    zip_code bigint NOT NULL,
+    state character varying(255) NOT NULL,
+    city character varying(255) NOT NULL,
+    neighborhood character varying(255) NOT NULL,
+    street character varying(255) NOT NULL,
+    house_number character varying(255) DEFAULT 'S/N'::character varying,
+    complement character varying(255),
+    phone_number bigint NOT NULL,
+    reference_point character varying(255),
+    active boolean DEFAULT false,
+    created_at timestamp with time zone NOT NULL,
+    updated_at timestamp with time zone NOT NULL
+);
+
+
+ALTER TABLE public.adresses OWNER TO administrador;
+
+--
+-- Name: adresses_id_seq; Type: SEQUENCE; Schema: public; Owner: administrador
+--
+
+CREATE SEQUENCE public.adresses_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.adresses_id_seq OWNER TO administrador;
+
+--
+-- Name: adresses_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: administrador
+--
+
+ALTER SEQUENCE public.adresses_id_seq OWNED BY public.adresses.id;
+
+
+--
+-- Name: avaliations; Type: TABLE; Schema: public; Owner: administrador
+--
+
+CREATE TABLE public.avaliations (
+    id integer NOT NULL,
+    user_id integer NOT NULL,
+    item_id integer NOT NULL,
+    rating integer NOT NULL,
+    title character varying(255) NOT NULL,
+    comment character varying(255) NOT NULL,
+    created_at timestamp with time zone NOT NULL,
+    updated_at timestamp with time zone NOT NULL
+);
+
+
+ALTER TABLE public.avaliations OWNER TO administrador;
+
+--
+-- Name: avaliations_id_seq; Type: SEQUENCE; Schema: public; Owner: administrador
+--
+
+CREATE SEQUENCE public.avaliations_id_seq
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.avaliations_id_seq OWNER TO administrador;
+
+--
+-- Name: avaliations_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: administrador
+--
+
+ALTER SEQUENCE public.avaliations_id_seq OWNED BY public.avaliations.id;
+
+
+--
+-- Name: categories; Type: TABLE; Schema: public; Owner: administrador
+--
+
+CREATE TABLE public.categories (
+    id integer NOT NULL,
+    name character varying(255) NOT NULL,
+    "position" integer,
+    created_at timestamp with time zone NOT NULL,
+    updated_at timestamp with time zone NOT NULL
+);
+
+
+ALTER TABLE public.categories OWNER TO administrador;
+
+--
+-- Name: categories_id_seq; Type: SEQUENCE; Schema: public; Owner: administrador
+--
+
+CREATE SEQUENCE public.categories_id_seq
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.categories_id_seq OWNER TO administrador;
+
+--
+-- Name: categories_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: administrador
+--
+
+ALTER SEQUENCE public.categories_id_seq OWNED BY public.categories.id;
+
+
+--
+-- Name: company_information; Type: TABLE; Schema: public; Owner: administrador
+--
+
+CREATE TABLE public.company_information (
+    id integer NOT NULL,
+    name character varying(255) NOT NULL,
+    cnpj character varying(255) NOT NULL,
+    email character varying(255) NOT NULL,
+    phone character varying(255) NOT NULL,
+    phone_url character varying(255),
+    address character varying(255) NOT NULL,
+    address_url character varying(255),
+    instagram_url character varying(255),
+    created_at timestamp with time zone NOT NULL,
+    updated_at timestamp with time zone NOT NULL
+);
+
+
+ALTER TABLE public.company_information OWNER TO administrador;
+
+--
+-- Name: company_information_id_seq; Type: SEQUENCE; Schema: public; Owner: administrador
+--
+
+CREATE SEQUENCE public.company_information_id_seq
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.company_information_id_seq OWNER TO administrador;
+
+--
+-- Name: company_information_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: administrador
+--
+
+ALTER SEQUENCE public.company_information_id_seq OWNED BY public.company_information.id;
+
+
+--
+-- Name: favorites; Type: TABLE; Schema: public; Owner: administrador
+--
+
+CREATE TABLE public.favorites (
+    user_id integer NOT NULL,
+    item_id integer NOT NULL,
+    created_at timestamp with time zone NOT NULL,
+    updated_at timestamp with time zone NOT NULL
+);
+
+
+ALTER TABLE public.favorites OWNER TO administrador;
+
+--
+-- Name: item_characteristics; Type: TABLE; Schema: public; Owner: administrador
+--
+
+CREATE TABLE public.item_characteristics (
+    item_id integer NOT NULL,
+    width double precision NOT NULL,
+    height double precision NOT NULL,
+    length double precision NOT NULL,
+    weight double precision NOT NULL,
+    insurance_value double precision NOT NULL,
+    quantity integer,
+    created_at timestamp with time zone NOT NULL,
+    updated_at timestamp with time zone NOT NULL
+);
+
+
+ALTER TABLE public.item_characteristics OWNER TO administrador;
+
+--
+-- Name: items; Type: TABLE; Schema: public; Owner: administrador
+--
+
+CREATE TABLE public.items (
+    id integer NOT NULL,
+    name character varying(255) NOT NULL,
+    description character varying(255),
+    price double precision NOT NULL,
+    in_stock integer NOT NULL,
+    featured boolean,
+    promotion boolean DEFAULT false,
+    thumbnail_url character varying(255),
+    bucket character varying(255),
+    mime character varying(255),
+    size double precision,
+    images jsonb,
+    sub_category_id integer NOT NULL,
+    created_at timestamp with time zone NOT NULL,
+    updated_at timestamp with time zone NOT NULL
+);
+
+
+ALTER TABLE public.items OWNER TO administrador;
+
+--
+-- Name: items_id_seq; Type: SEQUENCE; Schema: public; Owner: administrador
+--
+
+CREATE SEQUENCE public.items_id_seq
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.items_id_seq OWNER TO administrador;
+
+--
+-- Name: items_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: administrador
+--
+
+ALTER SEQUENCE public.items_id_seq OWNED BY public.items.id;
+
+
+--
+-- Name: items_promotion; Type: TABLE; Schema: public; Owner: administrador
+--
+
+CREATE TABLE public.items_promotion (
+    id integer NOT NULL,
+    item_id integer NOT NULL,
+    promotion_id integer NOT NULL,
+    price double precision NOT NULL,
+    description character varying(255),
+    created_at timestamp with time zone NOT NULL,
+    updated_at timestamp with time zone NOT NULL
+);
+
+
+ALTER TABLE public.items_promotion OWNER TO administrador;
+
+--
+-- Name: items_promotion_id_seq; Type: SEQUENCE; Schema: public; Owner: administrador
+--
+
+CREATE SEQUENCE public.items_promotion_id_seq
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.items_promotion_id_seq OWNER TO administrador;
+
+--
+-- Name: items_promotion_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: administrador
+--
+
+ALTER SEQUENCE public.items_promotion_id_seq OWNED BY public.items_promotion.id;
+
+
+--
+-- Name: items_sell; Type: TABLE; Schema: public; Owner: administrador
+--
+
+CREATE TABLE public.items_sell (
+    id integer NOT NULL,
+    item_id integer NOT NULL,
+    purchase_id integer NOT NULL,
+    quantity integer NOT NULL,
+    price double precision NOT NULL,
+    created_at timestamp with time zone NOT NULL,
+    updated_at timestamp with time zone NOT NULL
+);
+
+
+ALTER TABLE public.items_sell OWNER TO administrador;
+
+--
+-- Name: items_sell_id_seq; Type: SEQUENCE; Schema: public; Owner: administrador
+--
+
+CREATE SEQUENCE public.items_sell_id_seq
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.items_sell_id_seq OWNER TO administrador;
+
+--
+-- Name: items_sell_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: administrador
+--
+
+ALTER SEQUENCE public.items_sell_id_seq OWNED BY public.items_sell.id;
+
+
+--
+-- Name: items_tags_value; Type: TABLE; Schema: public; Owner: administrador
+--
+
+CREATE TABLE public.items_tags_value (
+    item_id integer NOT NULL,
+    tag_value_id integer NOT NULL,
+    created_at timestamp with time zone NOT NULL,
+    updated_at timestamp with time zone NOT NULL
+);
+
+
+ALTER TABLE public.items_tags_value OWNER TO administrador;
+
+--
+-- Name: promotions; Type: TABLE; Schema: public; Owner: administrador
+--
+
+CREATE TABLE public.promotions (
+    id integer NOT NULL,
+    name character varying(255) NOT NULL,
+    description character varying(255),
+    featured boolean DEFAULT false NOT NULL,
+    thumbnail_url character varying(255),
+    bucket character varying(255),
+    mime character varying(255),
+    created_at timestamp with time zone NOT NULL,
+    updated_at timestamp with time zone NOT NULL
+);
+
+
+ALTER TABLE public.promotions OWNER TO administrador;
+
+--
+-- Name: promotions_id_seq; Type: SEQUENCE; Schema: public; Owner: administrador
+--
+
+CREATE SEQUENCE public.promotions_id_seq
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.promotions_id_seq OWNER TO administrador;
+
+--
+-- Name: promotions_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: administrador
+--
+
+ALTER SEQUENCE public.promotions_id_seq OWNED BY public.promotions.id;
+
+
+--
+-- Name: purchases; Type: TABLE; Schema: public; Owner: administrador
+--
+
+CREATE TABLE public.purchases (
+    id integer NOT NULL,
+    user_id integer NOT NULL,
+    address_id integer NOT NULL,
+    payment_type public.enum_purchases_payment_type,
+    payment_status public.enum_purchases_payment_status,
+    payment_id character varying(255),
+    all_value double precision,
+    status public.enum_purchases_status DEFAULT 'Recebido'::public.enum_purchases_status,
+    frete character varying(255) NOT NULL,
+    created_at timestamp with time zone NOT NULL,
+    updated_at timestamp with time zone NOT NULL
+);
+
+
+ALTER TABLE public.purchases OWNER TO administrador;
+
+--
+-- Name: purchases_id_seq; Type: SEQUENCE; Schema: public; Owner: administrador
+--
+
+CREATE SEQUENCE public.purchases_id_seq
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.purchases_id_seq OWNER TO administrador;
+
+--
+-- Name: purchases_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: administrador
+--
+
+ALTER SEQUENCE public.purchases_id_seq OWNED BY public.purchases.id;
+
+
+--
+-- Name: sub_categories; Type: TABLE; Schema: public; Owner: administrador
+--
+
+CREATE TABLE public.sub_categories (
+    id integer NOT NULL,
+    name character varying(255) NOT NULL,
+    category_id integer NOT NULL,
+    created_at timestamp with time zone NOT NULL,
+    updated_at timestamp with time zone NOT NULL
+);
+
+
+ALTER TABLE public.sub_categories OWNER TO administrador;
+
+--
+-- Name: sub_categories_id_seq; Type: SEQUENCE; Schema: public; Owner: administrador
+--
+
+CREATE SEQUENCE public.sub_categories_id_seq
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.sub_categories_id_seq OWNER TO administrador;
+
+--
+-- Name: sub_categories_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: administrador
+--
+
+ALTER SEQUENCE public.sub_categories_id_seq OWNED BY public.sub_categories.id;
+
+
+--
+-- Name: sub_categories_tags; Type: TABLE; Schema: public; Owner: administrador
+--
+
+CREATE TABLE public.sub_categories_tags (
+    sub_category_id integer NOT NULL,
+    tag_id integer NOT NULL,
+    created_at timestamp with time zone NOT NULL,
+    updated_at timestamp with time zone NOT NULL
+);
+
+
+ALTER TABLE public.sub_categories_tags OWNER TO administrador;
+
+--
+-- Name: tags; Type: TABLE; Schema: public; Owner: administrador
+--
+
+CREATE TABLE public.tags (
+    id integer NOT NULL,
+    name character varying(255) NOT NULL,
+    created_at timestamp with time zone,
+    updated_at timestamp with time zone
+);
+
+
+ALTER TABLE public.tags OWNER TO administrador;
+
+--
+-- Name: tags_id_seq; Type: SEQUENCE; Schema: public; Owner: administrador
+--
+
+CREATE SEQUENCE public.tags_id_seq
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.tags_id_seq OWNER TO administrador;
+
+--
+-- Name: tags_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: administrador
+--
+
+ALTER SEQUENCE public.tags_id_seq OWNED BY public.tags.id;
+
+
+--
+-- Name: tags_value; Type: TABLE; Schema: public; Owner: administrador
+--
+
+CREATE TABLE public.tags_value (
+    id integer NOT NULL,
+    name character varying(255) NOT NULL,
+    tag_id integer NOT NULL,
+    created_at timestamp with time zone,
+    updated_at timestamp with time zone
+);
+
+
+ALTER TABLE public.tags_value OWNER TO administrador;
+
+--
+-- Name: tags_value_id_seq; Type: SEQUENCE; Schema: public; Owner: administrador
+--
+
+CREATE SEQUENCE public.tags_value_id_seq
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.tags_value_id_seq OWNER TO administrador;
+
+--
+-- Name: tags_value_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: administrador
+--
+
+ALTER SEQUENCE public.tags_value_id_seq OWNED BY public.tags_value.id;
+
+
+--
+-- Name: users; Type: TABLE; Schema: public; Owner: administrador
+--
+
+CREATE TABLE public.users (
+    id integer NOT NULL,
+    first_name character varying(255) NOT NULL,
+    last_name character varying(255) NOT NULL,
+    phone character varying(255) NOT NULL,
+    birth timestamp with time zone NOT NULL,
+    email character varying(255) NOT NULL,
+    password character varying(255) NOT NULL,
+    role character varying(255) DEFAULT 'user'::character varying NOT NULL,
+    img_key character varying(255),
+    bucket character varying(255),
+    mime character varying(255),
+    created_at timestamp with time zone NOT NULL,
+    updated_at timestamp with time zone NOT NULL
+);
+
+
+ALTER TABLE public.users OWNER TO administrador;
+
+--
+-- Name: users_id_seq; Type: SEQUENCE; Schema: public; Owner: administrador
+--
+
+CREATE SEQUENCE public.users_id_seq
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.users_id_seq OWNER TO administrador;
+
+--
+-- Name: users_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: administrador
+--
+
+ALTER SEQUENCE public.users_id_seq OWNED BY public.users.id;
+
+
+--
+-- Name: adresses id; Type: DEFAULT; Schema: public; Owner: administrador
+--
+
+ALTER TABLE ONLY public.adresses ALTER COLUMN id SET DEFAULT nextval('public.adresses_id_seq'::regclass);
+
+
+--
+-- Name: avaliations id; Type: DEFAULT; Schema: public; Owner: administrador
+--
+
+ALTER TABLE ONLY public.avaliations ALTER COLUMN id SET DEFAULT nextval('public.avaliations_id_seq'::regclass);
+
+
+--
+-- Name: categories id; Type: DEFAULT; Schema: public; Owner: administrador
+--
+
+ALTER TABLE ONLY public.categories ALTER COLUMN id SET DEFAULT nextval('public.categories_id_seq'::regclass);
+
+
+--
+-- Name: company_information id; Type: DEFAULT; Schema: public; Owner: administrador
+--
+
+ALTER TABLE ONLY public.company_information ALTER COLUMN id SET DEFAULT nextval('public.company_information_id_seq'::regclass);
+
+
+--
+-- Name: items id; Type: DEFAULT; Schema: public; Owner: administrador
+--
+
+ALTER TABLE ONLY public.items ALTER COLUMN id SET DEFAULT nextval('public.items_id_seq'::regclass);
+
+
+--
+-- Name: items_promotion id; Type: DEFAULT; Schema: public; Owner: administrador
+--
+
+ALTER TABLE ONLY public.items_promotion ALTER COLUMN id SET DEFAULT nextval('public.items_promotion_id_seq'::regclass);
+
+
+--
+-- Name: items_sell id; Type: DEFAULT; Schema: public; Owner: administrador
+--
+
+ALTER TABLE ONLY public.items_sell ALTER COLUMN id SET DEFAULT nextval('public.items_sell_id_seq'::regclass);
+
+
+--
+-- Name: promotions id; Type: DEFAULT; Schema: public; Owner: administrador
+--
+
+ALTER TABLE ONLY public.promotions ALTER COLUMN id SET DEFAULT nextval('public.promotions_id_seq'::regclass);
+
+
+--
+-- Name: purchases id; Type: DEFAULT; Schema: public; Owner: administrador
+--
+
+ALTER TABLE ONLY public.purchases ALTER COLUMN id SET DEFAULT nextval('public.purchases_id_seq'::regclass);
+
+
+--
+-- Name: sub_categories id; Type: DEFAULT; Schema: public; Owner: administrador
+--
+
+ALTER TABLE ONLY public.sub_categories ALTER COLUMN id SET DEFAULT nextval('public.sub_categories_id_seq'::regclass);
+
+
+--
+-- Name: tags id; Type: DEFAULT; Schema: public; Owner: administrador
+--
+
+ALTER TABLE ONLY public.tags ALTER COLUMN id SET DEFAULT nextval('public.tags_id_seq'::regclass);
+
+
+--
+-- Name: tags_value id; Type: DEFAULT; Schema: public; Owner: administrador
+--
+
+ALTER TABLE ONLY public.tags_value ALTER COLUMN id SET DEFAULT nextval('public.tags_value_id_seq'::regclass);
+
+
+--
+-- Name: users id; Type: DEFAULT; Schema: public; Owner: administrador
+--
+
+ALTER TABLE ONLY public.users ALTER COLUMN id SET DEFAULT nextval('public.users_id_seq'::regclass);
+
+
+--
+-- Data for Name: SequelizeMeta; Type: TABLE DATA; Schema: public; Owner: administrador
+--
+
+COPY public."SequelizeMeta" (name) FROM stdin;
+20240130235049-create-categories-table.js
+20240131194000-create-sub-categories-table.js
+20240201172643-create-items-table.js
+20240202175746-create-users-table.js
+20240207184413-create-favorite-table.js
+20240208171717-create-adresses-table.js
+20240209113340-create-puchase-table.js
+20240209114417-create-item-sell-table.js
+20240310220522-create-promotions-table.js
+20240311185948-create-items-promotion-table.js
+20240331223745-create-tags-table.js
+20240415203411-create-tags-value-table.js
+20240415204417-create-items-tags-value-table.js
+20240416181743-create-sub-categorie-tag-table.js
+20240502142334-create-avaliations-table.js
+20240508165950-create-item-characteristics.js
+20240610143643-create-table-company-information.js
+\.
+
+
+--
+-- Data for Name: Sessions; Type: TABLE DATA; Schema: public; Owner: administrador
+--
+
+COPY public."Sessions" (sid, expires, data, created_at, updated_at) FROM stdin;
+\.
+
+
+--
+-- Data for Name: adresses; Type: TABLE DATA; Schema: public; Owner: administrador
+--
+
+COPY public.adresses (id, user_id, receiver_name, zip_code, state, city, neighborhood, street, house_number, complement, phone_number, reference_point, active, created_at, updated_at) FROM stdin;
+1	2	Marcelo Leal Andrade	40200020	BA	Jiquiriçá	Centro	Rua Rio Bom Jesus	98	Casa	71992216213	...	t	2024-11-03 21:38:39.804+00	2024-11-03 21:38:39.804+00
+2	1	Teste	8752070	São paulo	Mogi das Cruzes 	Jundiapeba 	Avenida Luiz Antônio de Oliveira	291	Não tem	11984927401	Piassa	t	2024-11-19 12:18:38.039+00	2024-11-19 12:22:30.877+00
+\.
+
+
+--
+-- Data for Name: avaliations; Type: TABLE DATA; Schema: public; Owner: administrador
+--
+
+COPY public.avaliations (id, user_id, item_id, rating, title, comment, created_at, updated_at) FROM stdin;
+\.
+
+
+--
+-- Data for Name: categories; Type: TABLE DATA; Schema: public; Owner: administrador
+--
+
+COPY public.categories (id, name, "position", created_at, updated_at) FROM stdin;
+1	Hardware	1	2024-11-03 21:04:28.429+00	2024-11-03 21:04:28.429+00
+2	Periféricos	2	2024-11-03 21:04:41.101+00	2024-11-03 21:04:41.101+00
+3	Notebooks	3	2024-11-03 21:04:58.298+00	2024-11-03 21:04:58.298+00
+4	Video Games	4	2024-11-03 21:05:10.317+00	2024-11-03 21:05:17.064+00
+\.
+
+
+--
+-- Data for Name: company_information; Type: TABLE DATA; Schema: public; Owner: administrador
+--
+
+COPY public.company_information (id, name, cnpj, email, phone, phone_url, address, address_url, instagram_url, created_at, updated_at) FROM stdin;
+1	e-commerce	000,000,000/000	email@email.com	77988885555		Rua R.	\N	\N	2024-11-03 21:34:47.085+00	2024-11-03 21:34:47.085+00
+\.
+
+
+--
+-- Data for Name: favorites; Type: TABLE DATA; Schema: public; Owner: administrador
+--
+
+COPY public.favorites (user_id, item_id, created_at, updated_at) FROM stdin;
+2	7	2024-11-03 21:38:54.064+00	2024-11-03 21:38:54.064+00
+2	10	2024-11-03 21:38:56.798+00	2024-11-03 21:38:56.798+00
+2	8	2024-11-03 21:39:02.739+00	2024-11-03 21:39:02.739+00
+\.
+
+
+--
+-- Data for Name: item_characteristics; Type: TABLE DATA; Schema: public; Owner: administrador
+--
+
+COPY public.item_characteristics (item_id, width, height, length, weight, insurance_value, quantity, created_at, updated_at) FROM stdin;
+4	10	15	10	10	10.1	\N	2024-11-03 21:25:45.783+00	2024-11-03 21:25:45.783+00
+6	10	15	10	10	10.1	\N	2024-11-03 21:25:56.545+00	2024-11-03 21:25:56.545+00
+7	10	15	10	10	10.1	\N	2024-11-03 21:26:06.931+00	2024-11-03 21:26:06.931+00
+11	10	15	10	10	10.1	\N	2024-11-03 21:26:18.543+00	2024-11-03 21:26:18.543+00
+8	10	15	10	10	10.1	\N	2024-11-03 21:26:31.302+00	2024-11-03 21:26:31.302+00
+10	10	15	10	10	10.1	\N	2024-11-03 21:26:44.946+00	2024-11-03 21:26:44.946+00
+9	10	15	10	10	10.1	\N	2024-11-03 21:26:59.352+00	2024-11-03 21:26:59.352+00
+5	10	15	10	10	10.1	\N	2024-11-03 21:27:13.951+00	2024-11-03 21:27:13.951+00
+1	10	15	10	10	10.1	\N	2024-11-03 21:27:27.967+00	2024-11-03 21:27:27.967+00
+2	10	15	10	10	10.1	\N	2024-11-03 21:27:39.566+00	2024-11-03 21:27:39.566+00
+3	10	15	10	10	10.1	\N	2024-11-03 21:28:07.718+00	2024-11-03 21:28:07.718+00
+\.
+
+
+--
+-- Data for Name: items; Type: TABLE DATA; Schema: public; Owner: administrador
+--
+
+COPY public.items (id, name, description, price, in_stock, featured, promotion, thumbnail_url, bucket, mime, size, images, sub_category_id, created_at, updated_at) FROM stdin;
+6	Placa de Vídeo RTX 3060 1-Click OC Galax NVIDIA GeForce, 12GB GDDR6, LHR, DLSS, Ray Tracing - 36NOL7MD1VOC		1700	20	t	t	items/6/thumbnail/placa-de-video-galax-geforce-rtx-3060-1-click-oc-15-gbps-12gb-gddr6-ray-tracing-dlss-36nol7md1voc_1614253646_g.webp	public/files	image/webp	21248	{"key": ["items/6/images/placa-de-video-galax-geforce-rtx-3060-1-click-oc-15-gbps-12gb-gddr6-ray-tracing-dlss-36nol7md1voc_1614253648_g.webp", "items/6/images/placa-de-video-galax-geforce-rtx-3060-1-click-oc-15-gbps-12gb-gddr6-ray-tracing-dlss-36nol7md1voc_1614253647_g.webp"], "mime": ["image/webp", "image/webp"], "size": [14702, 12980], "bucket": ["public/files", "public/files"]}	2	2024-11-03 21:20:11.098+00	2024-11-26 04:00:00.078+00
+1	Processador Intel Core i5-12400F, 2.5GHz (4.4GHz Max Turbo), Cache 18MB, LGA 1700 - BX8071512400F		720	20	t	f	items/1/thumbnail/processador-intel-core-i5-12400f-cache-xmb-xghz-xghz-max-turbo-lga-1700-bx8071512400f_1640094446_g.webp	public/files	image/webp	9976	{"key": ["items/1/images/processador-intel-core-i5-12400f-cache-xmb-xghz-xghz-max-turbo-lga-1700-bx8071512400f_1640094445_g.webp", "items/1/images/processador-intel-core-i5-12400f-cache-xmb-xghz-xghz-max-turbo-lga-1700-bx8071512400f_1640094444_g.webp"], "mime": ["image/webp", "image/webp"], "size": [8204, 10262], "bucket": ["public/files", "public/files"]}	1	2024-11-03 21:12:39.734+00	2024-11-03 21:12:39.778+00
+2	Processador Intel Core i7-12700KF, 3.6GHz (5.0GHz Max Turbo), Cache 25MB, 12 Núcleos, 20 Threads, LGA 1700 - BX8071512700KF		1800	20	t	f	items/2/thumbnail/processador-intel-core-i7-12700kf-cache-25mb-3-6ghz-5-0ghz-max-turbo-lga-1700-bx8071512700kf_1634829835_g.webp	public/files	image/webp	9860	{"key": ["items/2/images/processador-intel-core-i7-12700kf-cache-25mb-3-6ghz-5-0ghz-max-turbo-lga-1700-bx8071512700kf_1634829834_g.webp", "items/2/images/processador-intel-core-i7-12700kf-cache-25mb-3-6ghz-5-0ghz-max-turbo-lga-1700-bx8071512700kf_1634829833_g.webp"], "mime": ["image/webp", "image/webp"], "size": [10038, 8682], "bucket": ["public/files", "public/files"]}	1	2024-11-03 21:14:00.512+00	2024-11-03 21:14:00.562+00
+3	Processador Intel Core i9 14900K, 3.6 GHz (6.0GHz Turbo), 14ª Geração, 24-Cores 32-Threads, LGA 1700, BX8071514900K		4000	20	t	f	items/3/thumbnail/processador-intel-core-i9-14900k-36-ghz-60ghz-turbo-14-geracao-24-cores-32-threads-lga-1700-bx8071514900k_179835.jpg	public/files	image/jpeg	81008	\N	1	2024-11-03 21:15:03.716+00	2024-11-03 21:15:03.743+00
+4	AMD Ryzen 7 5700G 8-Core, 16-Thread Unlocked Desktop Processor with Radeon Graphics	\N	1200	20	t	f	items/4/thumbnail/51D3DrDmwkL.__AC_SX300_SY300_QL70_ML2_.jpg	public/files	image/jpeg	11538	{"key": ["items/4/images/51D3DrDmwkL.__AC_SX300_SY300_QL70_ML2_.jpg", "items/4/images/71aqa3+UdoL._AC_SX679_.jpg", "items/4/images/611EGHkdmfL._AC_SX679_.jpg"], "mime": ["image/jpeg", "image/jpeg", "image/jpeg"], "size": [11538, 44061, 41086], "bucket": ["public/files", "public/files", "public/files"]}	1	2024-11-03 21:16:13.951+00	2024-11-03 21:16:13.982+00
+8	Placa de Vídeo RX 6600 CLD 8G ASRock AMD Radeon, 8GB, GDDR6 - 90-GA2RZZ-00UANF	\N	1500	20	t	f	items/8/thumbnail/placa-de-video-asrock-amd-radeon-rx-6600-cld-8g-8gb-90-ga2rzz-00uanf_1634738812_g.webp	public/files	image/webp	18852	{"key": ["items/8/images/placa-de-video-asrock-amd-radeon-rx-6600-cld-8g-8gb-90-ga2rzz-00uanf_1634738810_g.webp"], "mime": ["image/webp"], "size": [15912], "bucket": ["public/files"]}	2	2024-11-03 21:22:01.429+00	2024-11-03 21:22:01.495+00
+5	Processador AMD Ryzen 9 9900X, 4.4GHz (5.6GHz Turbo), 12-Cores 24-Threads, AM5, Sem Cooler, 100-100000662WOF	\N	3300	20	t	f	items/5/thumbnail/processador-amd-ryzen-9-9900x-44ghz-56ghz-turbo-12-cores-24-threads-am5-sem-cooler-100-100000662wof_204885.jpg	public/files	image/jpeg	117747	{"key": ["items/5/images/processador-amd-ryzen-9-9900x-44ghz-56ghz-turbo-12-cores-24-threads-am5-sem-cooler-100-100000662wof_204884.jpg", "items/5/images/processador-amd-ryzen-9-9900x-44ghz-56ghz-turbo-12-cores-24-threads-am5-sem-cooler-100-100000662wof_204883.jpg", "items/5/images/processador-amd-ryzen-9-9900x-44ghz-56ghz-turbo-12-cores-24-threads-am5-sem-cooler-100-100000662wof_204882.jpg"], "mime": ["image/jpeg", "image/jpeg", "image/jpeg"], "size": [110879, 98175, 114512], "bucket": ["public/files", "public/files", "public/files"]}	1	2024-11-03 21:18:08.082+00	2024-11-03 21:18:08.139+00
+7	Placa de Vídeo RTX 4060 VENTUS 2x Black OC MSI NVIDIA GeForce, 8GB GDDR6, DLSS, Ray Tracing	\N	2000	20	t	t	items/7/thumbnail/placa-de-video-rtx-4060-ventus-2x-black-oc-msi-nvidia-geforce-8gb-gddr6-dlss-ray-tracing_1688052210_g.webp	public/files	image/webp	15652	{"key": ["items/7/images/placa-de-video-rtx-4060-ventus-2x-black-oc-msi-nvidia-geforce-8gb-gddr6-dlss-ray-tracing_1687964030_g.webp"], "mime": ["image/webp"], "size": [19058], "bucket": ["public/files"]}	2	2024-11-03 21:21:00.106+00	2024-11-14 04:00:00.053+00
+10	Placa de Vídeo RX 6650XT XFX Speedster SWFT210 AMD Radeon, 8GB GDDR6, HDMI 3xDP 2 FAN - RX-665X8DFDY		1700	20	t	f	items/10/thumbnail/placa-de-video-rx-6650xt-xfx-speedster-swft210-radeon-8gb-gddr6-hdmi-3xdp-2-fan-rx-665x8dfdy_1719604625_g.webp	public/files	image/webp	24478	{"key": ["items/10/images/placa-de-video-rx-6650xt-xfx-speedster-swft210-radeon-8gb-gddr6-hdmi-3xdp-2-fan-rx-665x8dfdy_1719604623_g.webp"], "mime": ["image/webp"], "size": [14230], "bucket": ["public/files"]}	2	2024-11-03 21:23:44.8+00	2024-11-03 21:23:44.854+00
+11	Placa de Vídeo RTX 4070 Super Gigabyte Windforce NVIDIA GeForce, 12GB GDDR6X, DLSS, Ray Tracing - GV-N407SWF3OC-12GD	\N	4500	20	t	t	items/11/thumbnail/placa-de-video-rtx-4070-super-gigabyte-windforce-nvidia-geforce-12gb-gddr6-dlss-ray-tracing-gv-n407swf3-12gd_1707245338_g.webp	public/files	image/webp	21746	{"key": ["items/11/images/placa-de-video-rtx-4070-super-gigabyte-windforce-nvidia-geforce-12gb-gddr6-dlss-ray-tracing-gv-n407swf3-12gd_1707245343_g.webp"], "mime": ["image/webp"], "size": [9950], "bucket": ["public/files"]}	2	2024-11-03 21:24:38.633+00	2024-11-12 04:00:00.08+00
+9	Placa de Vídeo RX 6750XT Gaming XFX Graphics Card AMD Radeon, 12GB GDDR6, Ray tracing, Fidelity FX - RX-675TMBAF9		2500	20	t	f	items/9/thumbnail/placa-de-video-rx-6750xt-gaming-graphics-card-amd-radeon-12gb-gddr6-ray-tracing-fidelity-fx-rx-675tmbaf9_1712004223_g.webp	public/files	image/webp	16700	{"key": ["items/9/images/placa-de-video-rx-6750xt-gaming-graphics-card-amd-radeon-12gb-gddr6-ray-tracing-fidelity-fx-rx-675tmbaf9_1712004218_g.webp"], "mime": ["image/webp"], "size": [12502], "bucket": ["public/files"]}	2	2024-11-03 21:22:51.471+00	2024-11-12 04:00:00.081+00
+\.
+
+
+--
+-- Data for Name: items_promotion; Type: TABLE DATA; Schema: public; Owner: administrador
+--
+
+COPY public.items_promotion (id, item_id, promotion_id, price, description, created_at, updated_at) FROM stdin;
+1	6	1	1000	\N	2024-11-03 21:30:01.356+00	2024-11-03 21:30:01.356+00
+2	7	1	1500.99	\N	2024-11-03 21:30:15.73+00	2024-11-03 21:30:15.73+00
+3	11	1	1800	\N	2024-11-03 21:30:31.671+00	2024-11-03 21:30:31.671+00
+\.
+
+
+--
+-- Data for Name: items_sell; Type: TABLE DATA; Schema: public; Owner: administrador
+--
+
+COPY public.items_sell (id, item_id, purchase_id, quantity, price, created_at, updated_at) FROM stdin;
+\.
+
+
+--
+-- Data for Name: items_tags_value; Type: TABLE DATA; Schema: public; Owner: administrador
+--
+
+COPY public.items_tags_value (item_id, tag_value_id, created_at, updated_at) FROM stdin;
+4	2	2024-11-03 21:32:05.052+00	2024-11-03 21:32:05.052+00
+5	2	2024-11-03 21:32:12.362+00	2024-11-03 21:32:12.362+00
+8	2	2024-11-03 21:32:18.672+00	2024-11-03 21:32:18.672+00
+10	2	2024-11-03 21:32:25.573+00	2024-11-03 21:32:25.573+00
+9	2	2024-11-03 21:32:31.847+00	2024-11-03 21:32:31.847+00
+1	1	2024-11-03 21:33:17.455+00	2024-11-03 21:33:17.455+00
+2	1	2024-11-03 21:33:24.691+00	2024-11-03 21:33:24.691+00
+3	1	2024-11-03 21:33:34.848+00	2024-11-03 21:33:34.848+00
+6	3	2024-11-03 21:32:55.808+00	2024-11-05 16:55:19.417+00
+7	3	2024-11-03 21:33:01.173+00	2024-11-05 16:55:32.638+00
+11	3	2024-11-03 21:33:06.468+00	2024-11-05 16:55:52.208+00
+\.
+
+
+--
+-- Data for Name: promotions; Type: TABLE DATA; Schema: public; Owner: administrador
+--
+
+COPY public.promotions (id, name, description, featured, thumbnail_url, bucket, mime, created_at, updated_at) FROM stdin;
+1	Nvidia Challenges	\N	t	promotions/1/thumbnail/corporate-web-nv-story-about-us-refresh-og-1200x630-r1.jpg	public/files	image/jpeg	2024-11-03 21:29:35.242+00	2024-11-03 21:29:35.251+00
+\.
+
+
+--
+-- Data for Name: purchases; Type: TABLE DATA; Schema: public; Owner: administrador
+--
+
+COPY public.purchases (id, user_id, address_id, payment_type, payment_status, payment_id, all_value, status, frete, created_at, updated_at) FROM stdin;
+\.
+
+
+--
+-- Data for Name: sub_categories; Type: TABLE DATA; Schema: public; Owner: administrador
+--
+
+COPY public.sub_categories (id, name, category_id, created_at, updated_at) FROM stdin;
+1	Processadores	1	2024-11-03 21:05:48.753+00	2024-11-03 21:05:48.753+00
+2	Placas de Vídeo	1	2024-11-03 21:06:05.949+00	2024-11-03 21:06:05.949+00
+3	SSD	1	2024-11-03 21:06:15.617+00	2024-11-03 21:06:15.617+00
+4	Placa Mãe	1	2024-11-03 21:06:33.897+00	2024-11-03 21:06:33.897+00
+5	Teclado	2	2024-11-03 21:07:00.251+00	2024-11-03 21:07:00.251+00
+6	Mouse	2	2024-11-03 21:07:12.249+00	2024-11-03 21:07:12.249+00
+7	Acessórios	2	2024-11-03 21:07:35.323+00	2024-11-03 21:07:35.323+00
+8	Consoles	4	2024-11-03 21:07:57.891+00	2024-11-03 21:07:57.891+00
+9	Portáteis	4	2024-11-03 21:08:18.099+00	2024-11-03 21:08:18.099+00
+10	Notebook Gamer	3	2024-11-03 21:08:47.051+00	2024-11-03 21:08:47.051+00
+11	Notebook HomeOfice	3	2024-11-03 21:09:19.22+00	2024-11-03 21:09:19.22+00
+\.
+
+
+--
+-- Data for Name: sub_categories_tags; Type: TABLE DATA; Schema: public; Owner: administrador
+--
+
+COPY public.sub_categories_tags (sub_category_id, tag_id, created_at, updated_at) FROM stdin;
+1	1	2024-11-03 21:31:31.12+00	2024-11-03 21:31:31.12+00
+2	1	2024-11-03 21:31:39.361+00	2024-11-03 21:31:39.361+00
+\.
+
+
+--
+-- Data for Name: tags; Type: TABLE DATA; Schema: public; Owner: administrador
+--
+
+COPY public.tags (id, name, created_at, updated_at) FROM stdin;
+1	Marca	2024-11-03 21:31:15.415+00	2024-11-03 21:37:05.386+00
+\.
+
+
+--
+-- Data for Name: tags_value; Type: TABLE DATA; Schema: public; Owner: administrador
+--
+
+COPY public.tags_value (id, name, tag_id, created_at, updated_at) FROM stdin;
+1	Intel	1	2024-11-03 21:31:50.591+00	2024-11-03 21:31:50.591+00
+2	AMD	1	2024-11-03 21:31:57.426+00	2024-11-03 21:31:57.426+00
+3	NVIDIA	1	2024-11-05 16:54:43.76+00	2024-11-05 16:54:43.76+00
+\.
+
+
+--
+-- Data for Name: users; Type: TABLE DATA; Schema: public; Owner: administrador
+--
+
+COPY public.users (id, first_name, last_name, phone, birth, email, password, role, img_key, bucket, mime, created_at, updated_at) FROM stdin;
+1	Admin	Admin	1234567890	2000-01-01 00:00:00+00	admin@admin.com	$2b$10$DMarKHTWx6lJ01ovpLycqORiBeII1OWPsnCPrChg7VBATMPFLJ/Gy	admin	\N	\N	\N	2024-10-29 14:37:25.941+00	2024-10-29 14:37:25.941+00
+2	Marcelo	Andrade	71992216213	1998-09-13 00:00:00+00	andradefj13@hotmail.com	$2b$10$6UX0ySgjgylzl8ofgLu2UOC49uuYx7CGyiOSOZWFgb1Viq8bjG/Qu	user	\N	\N	\N	2024-11-03 21:37:53.166+00	2024-11-03 21:37:53.166+00
+\.
+
+
+--
+-- Name: adresses_id_seq; Type: SEQUENCE SET; Schema: public; Owner: administrador
+--
+
+SELECT pg_catalog.setval('public.adresses_id_seq', 2, true);
+
+
+--
+-- Name: avaliations_id_seq; Type: SEQUENCE SET; Schema: public; Owner: administrador
+--
+
+SELECT pg_catalog.setval('public.avaliations_id_seq', 1, false);
+
+
+--
+-- Name: categories_id_seq; Type: SEQUENCE SET; Schema: public; Owner: administrador
+--
+
+SELECT pg_catalog.setval('public.categories_id_seq', 4, true);
+
+
+--
+-- Name: company_information_id_seq; Type: SEQUENCE SET; Schema: public; Owner: administrador
+--
+
+SELECT pg_catalog.setval('public.company_information_id_seq', 1, true);
+
+
+--
+-- Name: items_id_seq; Type: SEQUENCE SET; Schema: public; Owner: administrador
+--
+
+SELECT pg_catalog.setval('public.items_id_seq', 11, true);
+
+
+--
+-- Name: items_promotion_id_seq; Type: SEQUENCE SET; Schema: public; Owner: administrador
+--
+
+SELECT pg_catalog.setval('public.items_promotion_id_seq', 3, true);
+
+
+--
+-- Name: items_sell_id_seq; Type: SEQUENCE SET; Schema: public; Owner: administrador
+--
+
+SELECT pg_catalog.setval('public.items_sell_id_seq', 5, true);
+
+
+--
+-- Name: promotions_id_seq; Type: SEQUENCE SET; Schema: public; Owner: administrador
+--
+
+SELECT pg_catalog.setval('public.promotions_id_seq', 1, true);
+
+
+--
+-- Name: purchases_id_seq; Type: SEQUENCE SET; Schema: public; Owner: administrador
+--
+
+SELECT pg_catalog.setval('public.purchases_id_seq', 3, true);
+
+
+--
+-- Name: sub_categories_id_seq; Type: SEQUENCE SET; Schema: public; Owner: administrador
+--
+
+SELECT pg_catalog.setval('public.sub_categories_id_seq', 11, true);
+
+
+--
+-- Name: tags_id_seq; Type: SEQUENCE SET; Schema: public; Owner: administrador
+--
+
+SELECT pg_catalog.setval('public.tags_id_seq', 1, true);
+
+
+--
+-- Name: tags_value_id_seq; Type: SEQUENCE SET; Schema: public; Owner: administrador
+--
+
+SELECT pg_catalog.setval('public.tags_value_id_seq', 3, true);
+
+
+--
+-- Name: users_id_seq; Type: SEQUENCE SET; Schema: public; Owner: administrador
+--
+
+SELECT pg_catalog.setval('public.users_id_seq', 2, true);
+
+
+--
+-- Name: SequelizeMeta SequelizeMeta_pkey; Type: CONSTRAINT; Schema: public; Owner: administrador
+--
+
+ALTER TABLE ONLY public."SequelizeMeta"
+    ADD CONSTRAINT "SequelizeMeta_pkey" PRIMARY KEY (name);
+
+
+--
+-- Name: Sessions Sessions_pkey; Type: CONSTRAINT; Schema: public; Owner: administrador
+--
+
+ALTER TABLE ONLY public."Sessions"
+    ADD CONSTRAINT "Sessions_pkey" PRIMARY KEY (sid);
+
+
+--
+-- Name: adresses adresses_pkey; Type: CONSTRAINT; Schema: public; Owner: administrador
+--
+
+ALTER TABLE ONLY public.adresses
+    ADD CONSTRAINT adresses_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: avaliations avaliations_pkey; Type: CONSTRAINT; Schema: public; Owner: administrador
+--
+
+ALTER TABLE ONLY public.avaliations
+    ADD CONSTRAINT avaliations_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: categories categories_pkey; Type: CONSTRAINT; Schema: public; Owner: administrador
+--
+
+ALTER TABLE ONLY public.categories
+    ADD CONSTRAINT categories_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: company_information company_information_pkey; Type: CONSTRAINT; Schema: public; Owner: administrador
+--
+
+ALTER TABLE ONLY public.company_information
+    ADD CONSTRAINT company_information_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: favorites favorites_pkey; Type: CONSTRAINT; Schema: public; Owner: administrador
+--
+
+ALTER TABLE ONLY public.favorites
+    ADD CONSTRAINT favorites_pkey PRIMARY KEY (user_id, item_id);
+
+
+--
+-- Name: item_characteristics item_characteristics_pkey; Type: CONSTRAINT; Schema: public; Owner: administrador
+--
+
+ALTER TABLE ONLY public.item_characteristics
+    ADD CONSTRAINT item_characteristics_pkey PRIMARY KEY (item_id);
+
+
+--
+-- Name: items items_pkey; Type: CONSTRAINT; Schema: public; Owner: administrador
+--
+
+ALTER TABLE ONLY public.items
+    ADD CONSTRAINT items_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: items_promotion items_promotion_item_id_key; Type: CONSTRAINT; Schema: public; Owner: administrador
+--
+
+ALTER TABLE ONLY public.items_promotion
+    ADD CONSTRAINT items_promotion_item_id_key UNIQUE (item_id);
+
+
+--
+-- Name: items_promotion items_promotion_pkey; Type: CONSTRAINT; Schema: public; Owner: administrador
+--
+
+ALTER TABLE ONLY public.items_promotion
+    ADD CONSTRAINT items_promotion_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: items_sell items_sell_pkey; Type: CONSTRAINT; Schema: public; Owner: administrador
+--
+
+ALTER TABLE ONLY public.items_sell
+    ADD CONSTRAINT items_sell_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: items_tags_value items_tags_value_pkey; Type: CONSTRAINT; Schema: public; Owner: administrador
+--
+
+ALTER TABLE ONLY public.items_tags_value
+    ADD CONSTRAINT items_tags_value_pkey PRIMARY KEY (item_id, tag_value_id);
+
+
+--
+-- Name: promotions promotions_pkey; Type: CONSTRAINT; Schema: public; Owner: administrador
+--
+
+ALTER TABLE ONLY public.promotions
+    ADD CONSTRAINT promotions_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: purchases purchases_pkey; Type: CONSTRAINT; Schema: public; Owner: administrador
+--
+
+ALTER TABLE ONLY public.purchases
+    ADD CONSTRAINT purchases_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: sub_categories sub_categories_pkey; Type: CONSTRAINT; Schema: public; Owner: administrador
+--
+
+ALTER TABLE ONLY public.sub_categories
+    ADD CONSTRAINT sub_categories_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: sub_categories_tags sub_categories_tags_pkey; Type: CONSTRAINT; Schema: public; Owner: administrador
+--
+
+ALTER TABLE ONLY public.sub_categories_tags
+    ADD CONSTRAINT sub_categories_tags_pkey PRIMARY KEY (sub_category_id, tag_id);
+
+
+--
+-- Name: tags tags_name_key; Type: CONSTRAINT; Schema: public; Owner: administrador
+--
+
+ALTER TABLE ONLY public.tags
+    ADD CONSTRAINT tags_name_key UNIQUE (name);
+
+
+--
+-- Name: tags tags_pkey; Type: CONSTRAINT; Schema: public; Owner: administrador
+--
+
+ALTER TABLE ONLY public.tags
+    ADD CONSTRAINT tags_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: tags_value tags_value_name_key; Type: CONSTRAINT; Schema: public; Owner: administrador
+--
+
+ALTER TABLE ONLY public.tags_value
+    ADD CONSTRAINT tags_value_name_key UNIQUE (name);
+
+
+--
+-- Name: tags_value tags_value_pkey; Type: CONSTRAINT; Schema: public; Owner: administrador
+--
+
+ALTER TABLE ONLY public.tags_value
+    ADD CONSTRAINT tags_value_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: users users_email_key; Type: CONSTRAINT; Schema: public; Owner: administrador
+--
+
+ALTER TABLE ONLY public.users
+    ADD CONSTRAINT users_email_key UNIQUE (email);
+
+
+--
+-- Name: users users_pkey; Type: CONSTRAINT; Schema: public; Owner: administrador
+--
+
+ALTER TABLE ONLY public.users
+    ADD CONSTRAINT users_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: adresses adresses_user_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: administrador
+--
+
+ALTER TABLE ONLY public.adresses
+    ADD CONSTRAINT adresses_user_id_fkey FOREIGN KEY (user_id) REFERENCES public.users(id) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- Name: avaliations avaliations_item_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: administrador
+--
+
+ALTER TABLE ONLY public.avaliations
+    ADD CONSTRAINT avaliations_item_id_fkey FOREIGN KEY (item_id) REFERENCES public.items(id) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- Name: avaliations avaliations_user_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: administrador
+--
+
+ALTER TABLE ONLY public.avaliations
+    ADD CONSTRAINT avaliations_user_id_fkey FOREIGN KEY (user_id) REFERENCES public.users(id) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- Name: favorites favorites_item_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: administrador
+--
+
+ALTER TABLE ONLY public.favorites
+    ADD CONSTRAINT favorites_item_id_fkey FOREIGN KEY (item_id) REFERENCES public.items(id) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- Name: favorites favorites_user_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: administrador
+--
+
+ALTER TABLE ONLY public.favorites
+    ADD CONSTRAINT favorites_user_id_fkey FOREIGN KEY (user_id) REFERENCES public.users(id) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- Name: item_characteristics item_characteristics_item_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: administrador
+--
+
+ALTER TABLE ONLY public.item_characteristics
+    ADD CONSTRAINT item_characteristics_item_id_fkey FOREIGN KEY (item_id) REFERENCES public.items(id) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- Name: items_promotion items_promotion_item_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: administrador
+--
+
+ALTER TABLE ONLY public.items_promotion
+    ADD CONSTRAINT items_promotion_item_id_fkey FOREIGN KEY (item_id) REFERENCES public.items(id) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- Name: items_promotion items_promotion_promotion_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: administrador
+--
+
+ALTER TABLE ONLY public.items_promotion
+    ADD CONSTRAINT items_promotion_promotion_id_fkey FOREIGN KEY (promotion_id) REFERENCES public.promotions(id) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- Name: items_sell items_sell_item_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: administrador
+--
+
+ALTER TABLE ONLY public.items_sell
+    ADD CONSTRAINT items_sell_item_id_fkey FOREIGN KEY (item_id) REFERENCES public.items(id) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- Name: items_sell items_sell_purchase_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: administrador
+--
+
+ALTER TABLE ONLY public.items_sell
+    ADD CONSTRAINT items_sell_purchase_id_fkey FOREIGN KEY (purchase_id) REFERENCES public.purchases(id) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- Name: items items_sub_category_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: administrador
+--
+
+ALTER TABLE ONLY public.items
+    ADD CONSTRAINT items_sub_category_id_fkey FOREIGN KEY (sub_category_id) REFERENCES public.sub_categories(id) ON UPDATE CASCADE ON DELETE RESTRICT;
+
+
+--
+-- Name: items_tags_value items_tags_value_item_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: administrador
+--
+
+ALTER TABLE ONLY public.items_tags_value
+    ADD CONSTRAINT items_tags_value_item_id_fkey FOREIGN KEY (item_id) REFERENCES public.items(id) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- Name: items_tags_value items_tags_value_tag_value_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: administrador
+--
+
+ALTER TABLE ONLY public.items_tags_value
+    ADD CONSTRAINT items_tags_value_tag_value_id_fkey FOREIGN KEY (tag_value_id) REFERENCES public.tags_value(id) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- Name: purchases purchases_address_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: administrador
+--
+
+ALTER TABLE ONLY public.purchases
+    ADD CONSTRAINT purchases_address_id_fkey FOREIGN KEY (address_id) REFERENCES public.adresses(id) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- Name: purchases purchases_user_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: administrador
+--
+
+ALTER TABLE ONLY public.purchases
+    ADD CONSTRAINT purchases_user_id_fkey FOREIGN KEY (user_id) REFERENCES public.users(id) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- Name: sub_categories sub_categories_category_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: administrador
+--
+
+ALTER TABLE ONLY public.sub_categories
+    ADD CONSTRAINT sub_categories_category_id_fkey FOREIGN KEY (category_id) REFERENCES public.categories(id) ON UPDATE CASCADE ON DELETE RESTRICT;
+
+
+--
+-- Name: sub_categories_tags sub_categories_tags_sub_category_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: administrador
+--
+
+ALTER TABLE ONLY public.sub_categories_tags
+    ADD CONSTRAINT sub_categories_tags_sub_category_id_fkey FOREIGN KEY (sub_category_id) REFERENCES public.sub_categories(id) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- Name: sub_categories_tags sub_categories_tags_tag_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: administrador
+--
+
+ALTER TABLE ONLY public.sub_categories_tags
+    ADD CONSTRAINT sub_categories_tags_tag_id_fkey FOREIGN KEY (tag_id) REFERENCES public.tags(id) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- Name: tags_value tags_value_tag_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: administrador
+--
+
+ALTER TABLE ONLY public.tags_value
+    ADD CONSTRAINT tags_value_tag_id_fkey FOREIGN KEY (tag_id) REFERENCES public.tags(id) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- PostgreSQL database dump complete
+--
+
